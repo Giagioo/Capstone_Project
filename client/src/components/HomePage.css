@@ -1,0 +1,93 @@
+
+
+.homepage-container {
+    padding-top: 80px;
+    background-color: #1c1c1c;
+    color: #e0e0e0;
+    min-height: 100vh;
+  }
+  
+  .hero-section {
+    position: relative;
+    height: 60vh;
+    background-size: cover;
+    background-position: center;
+    margin-bottom: 20px;
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(28, 28, 28, 1), rgba(28, 28, 28, 0));
+    color: #fff;
+  }
+  
+  .hero-overlay h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+  }
+  
+  .hero-overlay p {
+    font-size: 18px;
+    max-width: 600px;
+  }
+  
+  .hero-overlay button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #00d474;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .hero-overlay button:hover {
+    background-color: #00b864;
+  }
+  
+  .carousels {
+    padding-left: 20px;
+  }
+  
+  .carousels h2 {
+    margin: 20px 0;
+  }
+  
+  .carousel-item {
+    position: relative;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  .carousel-item img {
+    width: 100%;
+    border-radius: 8px;
+    transition: transform 0.3s;
+  }
+  
+  .carousel-item:hover img {
+    transform: scale(1.05);
+  }
+  
+  .movie-title {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    color: #fff;
+    font-size: 14px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 5px;
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .carousel-item:hover .movie-title {
+    opacity: 1;
+  }
+  

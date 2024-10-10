@@ -1,0 +1,25 @@
+
+.movie-carousel {
+  margin: 40px 0;
+}
+
+.movie-carousel h2 {
+  margin-bottom: 20px;
+  color: #fff;
+  font-size: 28px;
+}
+
+/* Swiper Navigation Buttons */
+.swiper-button-next,
+.swiper-button-prev {
+  color: #00d474;
+}
+
+.swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.swiper-pagination-bullet-active {
+  background: #fff;
+}
+

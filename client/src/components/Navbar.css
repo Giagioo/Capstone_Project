@@ -1,0 +1,133 @@
+/* Reset di base */
+.navbar * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Stile generale della navbar */
+  .navbar {
+    background: linear-gradient(to bottom, #2b2b2b, #1c1c1c);
+    color: #fff;
+    padding: 10px 20px;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  .navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  /* Logo */
+  .navbar-logo a {
+    color: #00d474;
+    font-size: 24px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  /* Menu di navigazione */
+  .navbar-menu {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: center;
+  }
+  
+  .navbar-menu li {
+    margin: 0 15px;
+  }
+  
+  .navbar-menu a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+  }
+  
+  .navbar-menu a:hover {
+    color: #00d474;
+  }
+  
+  /* Barra di ricerca */
+  .navbar-search {
+    position: relative;
+  }
+  
+  .navbar-search input {
+    padding: 5px 10px;
+    border: 1px solid #444;
+    border-radius: 3px;
+    background-color: #1c1c1c;
+    color: #fff;
+  }
+  
+  .navbar-search input::placeholder {
+    color: #888;
+  }
+  
+  .navbar-search button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .navbar-search button:hover {
+    color: #fff;
+  }
+  
+  
+  .navbar-actions a,
+  .navbar-actions button {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .navbar-actions a:hover,
+  .navbar-actions button:hover {
+    color: #00d474;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .navbar-container {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .navbar-menu {
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+    }
+    .navbar-menu li {
+      margin: 10px 0;
+    }
+    .navbar-actions {
+      margin-top: 10px;
+    }
+  }
+
+  .navbar-menu a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s;
+  }
+  
+  

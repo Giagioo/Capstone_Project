@@ -1,0 +1,53 @@
+/* HomePage.css */
+
+/* Contenitore principale */
+.homepage-container {
+  padding: 80px 20px 20px;
+  background-color: #181818;
+  min-height: 100vh;
+}
+
+/* Griglia dei film */
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+  grid-gap: 15px;
+}
+
+/* Scheda del film */
+.movie-card {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* Immagine del film */
+.movie-poster {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Effetto hover */
+.movie-card:hover .movie-poster {
+  transform: scale(1.05);
+  transition: transform 0.3s;
+}
+
+/* Informazioni sul film (mostrate al passaggio del mouse) */
+.movie-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(24, 24, 24, 0.8);
+    color: #e0e0e0;
+    padding: 10px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .movie-card:hover .movie-info {
+    opacity: 1;
+  }
+  

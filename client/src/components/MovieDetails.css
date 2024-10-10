@@ -1,0 +1,47 @@
+.movie-details-container {
+  padding-top: 80px;
+  color: #e0e0e0;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.movie-details-poster {
+  width: 100%;
+  max-width: 400px;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.review {
+  background-color: #333333;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+form {
+  margin-top: 20px;
+}
+
+form .form-group {
+  margin-bottom: 15px;
+}
+
+form textarea,
+form select {
+  background-color: #444444;
+  color: #e0e0e0;
+  border: 1px solid #555555;
+}
+
+form textarea {
+  width: 100%;
+  height: 100px;
+}
+
+form button {
+  background-color: #e74c3c;
+  color: #e0e0e0;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
