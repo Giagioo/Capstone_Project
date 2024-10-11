@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useContext } from 'react';
+import axiosInstance from '../utlis/axiosInstance';
 import './AdminBooks.css';
+import { AuthContext } from '../context/AuthContext';
 
 const AdminBooks = () => {
   const [books, setBooks] = useState([]);
@@ -14,12 +15,12 @@ const AdminBooks = () => {
   const [editingBookId, setEditingBookId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  const token = localStorage.getItem('token');
+  const { authData } = useContext(AuthContext); // Ottieni authData dall'AuthContext
 
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/books');
+        const response = await axiosInstance.get('/books'); // Usa path relativo
         setBooks(response.data);
       } catch (error) {
         console.error('Errore nel recuperare i libri:', error);
@@ -37,11 +38,7 @@ const AdminBooks = () => {
   const handleAddBook = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/books', newBook, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axiosInstance.post('/books', newBook); // Usa path relativo
       setBooks([response.data, ...books]);
       setNewBook({
         title: '',
@@ -55,6 +52,36 @@ const AdminBooks = () => {
     }
   };
 
+  // Funzione per aggiornare un libro esistente
+  const handleUpdateBook = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axiosInstance.put(`/books/${editingBookId}`, newBook); // Usa path relativo
+      setBooks(books.map(book => book._id === editingBookId ? response.data : book));
+      setNewBook({
+        title: '',
+        author: '',
+        description: '',
+        publishedDate: '',
+        coverImageUrl: '',
+      });
+      setIsEditing(false);
+      setEditingBookId(null);
+    } catch (error) {
+      console.error('Errore nell\'aggiornare il libro:', error);
+    }
+  };
+
+  // Funzione per eliminare un libro
+  const handleDeleteBook = async (id) => {
+    try {
+      await axiosInstance.delete(`/books/${id}`); // Usa path relativo
+      setBooks(books.filter(book => book._id !== id));
+    } catch (error) {
+      console.error('Errore nell\'eliminare il libro:', error);
+    }
+  };
+
   // Funzione per iniziare la modifica di un libro
   const handleEditClick = (book) => {
     setIsEditing(true);
@@ -63,88 +90,17 @@ const AdminBooks = () => {
       title: book.title,
       author: book.author,
       description: book.description,
-      publishedDate: book.publishedDate ? book.publishedDate.substring(0, 10) : '',
+      publishedDate: book.publishedDate,
       coverImageUrl: book.coverImageUrl,
     });
   };
 
-  // Funzione per annullare la modifica
-  const handleCancelEdit = () => {
-    setIsEditing(false);
-    setEditingBookId(null);
-    setNewBook({
-      title: '',
-      author: '',
-      description: '',
-      publishedDate: '',
-      coverImageUrl: '',
-    });
-  };
-
-  // Funzione per aggiornare un libro esistente
-  const handleUpdateBook = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.put(
-        `http://localhost:5000/api/books/${editingBookId}`,
-        newBook,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // Aggiorna la lista dei libri
-      setBooks(
-        books.map((book) =>
-          book._id === editingBookId ? response.data : book
-        )
-      );
-
-      // Resetta lo stato
-      setIsEditing(false);
-      setEditingBookId(null);
-      setNewBook({
-        title: '',
-        author: '',
-        description: '',
-        publishedDate: '',
-        coverImageUrl: '',
-      });
-    } catch (error) {
-      console.error('Errore nell\'aggiornare il libro:', error);
-    }
-  };
-
-  // Funzione per eliminare un libro
-  const handleDeleteBook = async (bookId) => {
-    if (window.confirm('Sei sicuro di voler eliminare questo libro?')) {
-      try {
-        await axios.delete(`http://localhost:5000/api/books/${bookId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        // Aggiorna la lista dei libri
-        setBooks(books.filter((book) => book._id !== bookId));
-      } catch (error) {
-        console.error('Errore nell\'eliminare il libro:', error);
-      }
-    }
-  };
-
   return (
     <div className="admin-books-container">
-      <h1>Gestione Libri</h1>
+      <h2>Backoffice Libri</h2>
 
       {/* Form per aggiungere o modificare un libro */}
-      <form
-        className="book-form"
-        onSubmit={isEditing ? handleUpdateBook : handleAddBook}
-      >
-        <h2>{isEditing ? 'Modifica Libro' : 'Aggiungi un nuovo libro'}</h2>
+      <form onSubmit={isEditing ? handleUpdateBook : handleAddBook}>
         <input
           type="text"
           name="title"
@@ -166,65 +122,41 @@ const AdminBooks = () => {
           placeholder="Descrizione"
           value={newBook.description}
           onChange={handleChange}
+          required
         />
         <input
           type="date"
           name="publishedDate"
+          placeholder="Data di pubblicazione"
           value={newBook.publishedDate}
           onChange={handleChange}
+          required
         />
         <input
           type="text"
           name="coverImageUrl"
-          placeholder="URL immagine di copertina"
+          placeholder="URL dell'immagine di copertina"
           value={newBook.coverImageUrl}
           onChange={handleChange}
+          required
         />
-        <div className="form-buttons">
-          <button type="submit">{isEditing ? 'Aggiorna Libro' : 'Aggiungi Libro'}</button>
-          {isEditing && (
-            <button type="button" onClick={handleCancelEdit}>
-              Annulla
-            </button>
-          )}
-        </div>
+        <button type="submit">{isEditing ? 'Aggiorna Libro' : 'Aggiungi Libro'}</button>
       </form>
 
       {/* Lista dei libri */}
-      <h2>Elenco dei Libri</h2>
-      <table className="books-table">
-        <thead>
-          <tr>
-            <th>Titolo</th>
-            <th>Autore</th>
-            <th>Data di Pubblicazione</th>
-            <th>Azioni</th>
-          </tr>
-        </thead>
-        <tbody>
-          {books.length > 0 ? (
-            books.map((book) => (
-              <tr key={book._id}>
-                <td>{book.title}</td>
-                <td>{book.author}</td>
-                <td>
-                  {book.publishedDate
-                    ? new Date(book.publishedDate).toLocaleDateString()
-                    : 'N/A'}
-                </td>
-                <td>
-                  <button onClick={() => handleEditClick(book)}>Modifica</button>
-                  <button onClick={() => handleDeleteBook(book._id)}>Elimina</button>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="4">Nessun libro disponibile.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <ul className="books-list">
+        {books.map(book => (
+          <li key={book._id}>
+            <h3>{book.title}</h3>
+            <p><strong>Autore:</strong> {book.author}</p>
+            <p>{book.description}</p>
+            <p><strong>Data di pubblicazione:</strong> {book.publishedDate}</p>
+            <img src={book.coverImageUrl} alt={`${book.title} Cover`} />
+            <button onClick={() => handleEditClick(book)}>Modifica</button>
+            <button onClick={() => handleDeleteBook(book._id)}>Elimina</button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
