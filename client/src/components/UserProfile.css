@@ -1,0 +1,219 @@
+
+.user-profile-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #0c0c0c; /* Sfondo principale */
+  color: #ffffff; /* Testo principale */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.user-profile-container h1 {
+  text-align: center;
+  color:  #00d474; /* Accento rosso */
+  margin-bottom: 30px;
+  font-size: 2.5rem;
+}
+
+.user-info {
+  background-color: #1c1c1c; /* Sfondo delle schede */
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 40px;
+  border: 1px solid #333333; /* Bordi */
+}
+
+.user-info p {
+  font-size: 1.1rem;
+  margin: 10px 0;
+}
+
+.user-info p strong {
+  color:  #00d474; /* Accento rosso per i titoli */
+}
+
+.user-profile-container h2 {
+  color:  #00d474; /* Accento rosso */
+  margin-bottom: 20px;
+  font-size: 2rem;
+  border-bottom: 2px solid #333333; /* Divider */
+  padding-bottom: 10px;
+}
+
+.user-review {
+  background-color: #1c1c1c; /* Sfondo delle schede */
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #333333; /* Bordi */
+}
+
+.user-review h3 {
+  color: #ffffff;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.user-review p {
+  font-size: 1rem;
+  margin: 8px 0;
+}
+
+.user-review p strong {
+  color:  #00d474; /* Accento rosso per i titoli */
+}
+
+.review-actions {
+  margin-top: 15px;
+}
+
+.review-actions .btn {
+  padding: 8px 16px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.review-actions .btn-secondary {
+  background-color: #555555; /* Sfondo dei bottoni secondari */
+  color: #ffffff;
+}
+
+.review-actions .btn-secondary:hover {
+  background-color: #777777;
+}
+
+.review-actions .btn-danger {
+  background-color: #b71c1c; /* Sfondo del bottone Elimina */
+  color: #ffffff;
+}
+
+.review-actions .btn-danger:hover {
+  background-color: #d32f2f;
+}
+
+.review-actions .btn-primary {
+  background-color:  #00d474; /* Sfondo del bottone Salva */
+  color: #ffffff;
+}
+
+.review-actions .btn-primary:hover {
+  background-color: #f6121d;
+}
+
+.edit-review-form {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #1c1c1c; /* Sfondo delle schede */
+  border-radius: 8px;
+  border: 1px solid #333333; /* Bordi */
+}
+
+.edit-review-form h4 {
+  color:  #00d474; /* Accento rosso */
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.edit-review-form .form-group {
+  margin-bottom: 15px;
+}
+
+.edit-review-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.edit-review-form .form-control {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #555555;
+  border-radius: 4px;
+  background-color: #2c2c2c;
+  color: #ffffff;
+}
+
+.edit-review-form .form-control:focus {
+  border-color:  #00d474;
+  outline: none;
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.edit-actions .btn {
+  padding: 10px 20px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.edit-actions .btn-primary {
+  background-color:  #00d474; /* Sfondo del bottone Salva */
+  color: #ffffff;
+}
+
+.edit-actions .btn-primary:hover {
+  background-color: #f6121d;
+}
+
+.edit-actions .btn-secondary {
+  background-color: #555555; /* Sfondo del bottone Annulla */
+  color: #ffffff;
+}
+
+.edit-actions .btn-secondary:hover {
+  background-color: #777777;
+}
+
+.user-profile-container.error {
+  color: #b71c1c; /* Rosso per gli errori */
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .user-profile-container {
+    margin: 20px;
+    padding: 15px;
+  }
+
+  .user-profile-container h1 {
+    font-size: 2rem;
+  }
+
+  .user-profile-container h2 {
+    font-size: 1.8rem;
+  }
+
+  .user-review h3 {
+    font-size: 1.3rem;
+  }
+
+  .review-actions .btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  .edit-review-form h4 {
+    font-size: 1.3rem;
+  }
+
+  .edit-actions .btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+}

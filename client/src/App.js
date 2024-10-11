@@ -4,7 +4,7 @@ import HomePage from './components/HomePage';
 import MoviesList from './components/MoviesList'; 
 import MovieDetails from './components/MovieDetails';
 import SearchResults from './components/SearchResults';
-import Profile from './components/Profile';
+import UserProfile from './components/UserProfile';
 import BooksList from './components/BooksList';
 import BookDetails from './components/BookDetails';
 import AdminBooks from './components/AdminBooks';
@@ -22,7 +22,7 @@ function App() {
         <Route path="/movies" element={<MoviesList />} />
         <Route path="/movies/:id" element={<MovieDetails />} />
         <Route path="/search/:query" element={<SearchResults />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<UserProfile />} />
         <Route path="/books" element={<BooksList />} />
         <Route path="/books/:id" element={<BookDetails />} />
         <Route path="/admin/books" element={<AdminBooks />} />

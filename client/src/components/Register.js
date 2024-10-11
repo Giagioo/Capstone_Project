@@ -1,6 +1,8 @@
+// src/components/Register.js
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios from '../utlis/axiosInstance';
 import { useNavigate } from 'react-router-dom';
+import './Register.css';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -36,7 +38,7 @@ const Register = () => {
       };
 
       const res = await axios.post(
-        '/api/auth/register',
+        '/auth/register', // Percorso relativo grazie all'istanza di axios
         {
           username,
           email,
@@ -46,7 +48,7 @@ const Register = () => {
         config
       );
 
-      navigate('/login');
+      navigate('/login'); // Redirect alla pagina di login dopo la registrazione
     } catch (err) {
       console.error('Errore nella registrazione:', err);
     
@@ -68,7 +70,7 @@ const Register = () => {
   };
 
   return (
-    <div className="container mt-5">
+    <div className="register-container">
       <h2>Registrazione</h2>
       {errors.length > 0 && (
         <div className="alert alert-danger">

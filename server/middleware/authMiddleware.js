@@ -1,26 +1,24 @@
-// server/middleware/auth.js
 const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
+require('dotenv').config(); 
 
-dotenv.config();
+module.exports = function (req, res, next) {
+  const authHeader = req.header('Authorization');
+  const token = authHeader && authHeader.split(' ')[1];
+  
+  console.log('Authorization Header:', authHeader);
+  console.log('Token Estratto:', token);
 
-const authMiddleware = (req, res, next) => {
-  // Ottieni il token dalla header
-  const token = req.header('x-auth-token');
-
-  // Verifica se non c'è token
   if (!token) {
-    return res.status(401).json({ msg: 'Nessun token, autorizzazione negata' });
+    return res.status(401).json({ msg: 'No token, authorization denied.' });
   }
 
-  // Verifica il token
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('Token Decodificato:', decoded);
     req.user = decoded.user;
     next();
   } catch (err) {
-    res.status(401).json({ msg: 'Token non valido' });
+    console.error('Token Non Valido:', err.message);
+    res.status(401).json({ msg: 'Token is not valid.' });
   }
 };
-
-module.exports = authMiddleware;

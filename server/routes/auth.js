@@ -35,7 +35,7 @@ router.post(
         username,
         email,
         password,
-        role: role || 'user', // Imposta il ruolo, default a 'user' se non fornito
+        role,
       });
 
       // Salva l'utente (hash della password viene gestito dal middleware 'pre')

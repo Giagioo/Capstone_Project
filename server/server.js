@@ -3,7 +3,9 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 const userRoutes = require('./routes/users');
+const reviewRoutes = require('./routes/reviews');
 const bookRoutes = require('./routes/books');
+const tmdbRoutes = require('./routes/tmdb');
 const path = require('path');
 
 
@@ -19,8 +21,6 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Servire le immagini statiche
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Connessione a MongoDB
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/test', {
@@ -43,15 +43,17 @@ app.use('/api/auth', authRoutes);
 const movieRoutes = require('./routes/movies');
 app.use('/api/movies', movieRoutes);
 
-// Importa il router delle recensioni
-const reviewsRoute = require('./routes/reviews');
+
 
 // Usa il router delle recensioni
-app.use('/api/reviews', reviewsRoute);
+app.use('/api/reviews', reviewRoutes);
 
 //Rotta per user
 app.use('/api/users', userRoutes);
 
 //Rotta per libri
 app.use('/api/books', bookRoutes);
+
+// Rotta per i films TMDB
+app.use('/api/tmdb', tmdbRoutes);
 

@@ -1,72 +1,79 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useContext } from 'react';
+import axios from '../utlis/axiosInstance';
+import { AuthContext } from '../context/AuthContext';
 
-const AddReview = () => {
-  const [title, setTitle] = useState('');
-  const [text, setText] = useState('');
-  const [rating, setRating] = useState(1);
-  const [coverImage, setCoverImage] = useState('');
-  const [genre, setGenre] = useState('');
-  
-  
-  const handleSubmit = async (e) => {
+const AddReview = ({ movieId, onReviewAdded }) => {
+  const { authData } = useContext(AuthContext);
+  const isLoggedIn = !!authData.token;
+
+  const [rating, setRating] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const handleSubmitReview = async (e) => {
     e.preventDefault();
-  
-    // Recupera l'ID dell'utente loggato
-    const userId = localStorage.getItem('userId'); // Assicurati che l'utente sia loggato e che l'ID sia nel localStorage
-  
-    const review = { title, text, rating, userId };
-    console.log('Dati da inviare:', review); // Aggiungi questo per controllare i dati
-  
+    setError('');
+    setSuccess('');
+
+    // Validazione di base
+    if (reviewText.trim() === '') {
+      setError('La recensione non può essere vuota.');
+      return;
+    }
+
     try {
-      const response = await axios.post('http://localhost:5000/api/reviews', review);
-      console.log('Risposta dal server:', response.data);
+      const response = await axios.post(`/movies/${movieId}/reviews`, {
+        rating,
+        reviewText,
+      });
+
+      // Aggiorna la lista delle recensioni nel componente padre
+      if (onReviewAdded) {
+        onReviewAdded(response.data);
+      }
+
+      setSuccess('Recensione aggiunta con successo!');
+      setRating(5);
+      setReviewText('');
     } catch (error) {
-      console.error('Errore nell\'aggiungere la recensione', error.response ? error.response.data : error);
+      console.error('Errore nell\'aggiungere la recensione:', error);
+      if (error.response && error.response.data && error.response.data.msg) {
+        setError(error.response.data.msg);
+      } else {
+        setError('Errore nell\'aggiungere la recensione.');
+      }
     }
   };
-  
-  
-  
+
   return (
-    <div className="container">
-      <h2>Aggiungi una nuova recensione</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="add-review-container">
+      <h3>Lascia una recensione</h3>
+      {error && <div className="alert alert-danger">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
+      <form onSubmit={handleSubmitReview}>
         <div className="form-group">
-          <label>Titolo</label>
-          <input
-            type="text"
-            className="form-control"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Testo della recensione</label>
-          <textarea
-            className="form-control"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Valutazione</label>
+          <label>Valutazione:</label>
           <select
-            className="form-control"
             value={rating}
             onChange={(e) => setRating(e.target.value)}
-            required
+            className="form-control"
           >
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
+            {[10, 9, 8, 7, 6, 5, 4, 3, 2, 1].map(value => (
+              <option key={value} value={value}>{value}</option>
+            ))}
           </select>
         </div>
-        <button type="submit" className="btn btn-primary mt-3">Aggiungi recensione</button>
+        <div className="form-group">
+          <label>Recensione:</label>
+          <textarea
+            value={reviewText}
+            onChange={(e) => setReviewText(e.target.value)}
+            required
+            className="form-control"
+          />
+        </div>
+        <button type="submit" className="btn btn-primary mt-3">Invia Recensione</button>
       </form>
     </div>
   );

@@ -1,35 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState, useContext } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import axios from '../utlis/axiosInstance';
 import './MovieDetails.css';
+import AddReview from './AddReview'; // Importa AddReview
+import { AuthContext } from '../context/AuthContext'; // Importa AuthContext
 
 const MovieDetails = () => {
   const { id } = useParams(); 
+  const { authData } = useContext(AuthContext); // Consuma AuthContext
+  const isLoggedIn = !!authData.token; 
+
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [reviewText, setReviewText] = useState('');
-  const [rating, setRating] = useState(5);
   const [userReviews, setUserReviews] = useState([]);
-  const isLoggedIn = !!localStorage.getItem('token'); 
-  
-  const API_KEY = 'b8fd75462b0fd75612e05aba109a46d8';
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    
     const fetchMovieDetails = async () => {
       try {
-        const response = await axios.get(
-          `https://api.themoviedb.org/3/movie/${id}`,
-          {
-            params: {
-              api_key: API_KEY,
-              language: 'it-IT', 
-            },
-          }
-        );
+        // Recupera i dettagli del film tramite il backend
+        const response = await axios.get(`/movies/${id}`);
         setMovie(response.data);
       } catch (error) {
         console.error('Errore nel recuperare i dettagli del film:', error);
+        setError('Errore nel recuperare i dettagli del film.');
       } finally {
         setLoading(false);
       }
@@ -38,7 +32,7 @@ const MovieDetails = () => {
     // Funzione per recuperare le recensioni degli utenti dal backend
     const fetchUserReviews = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/movies/${id}/reviews`);
+        const response = await axios.get(`/movies/${id}/reviews`);
         setUserReviews(response.data);
       } catch (error) {
         console.error('Errore nel recuperare le recensioni:', error);
@@ -49,44 +43,10 @@ const MovieDetails = () => {
     fetchUserReviews();
   }, [id]);
 
-  const token = localStorage.getItem('token');
-  console.log('Token:', token);
-  
-
-  const handleSubmitReview = async (e) => {
-    e.preventDefault();
-  
-    if (!isLoggedIn) {
-      alert('Devi essere loggato per lasciare una recensione.');
-      return;
-    }
-  
-    const newReview = {
-      rating: rating,
-      text: reviewText,
-    };
-  
-    try {
-      // Qui dovrebbe esserci la definizione di 'token'
-      const response = await axios.post(
-        `http://localhost:5000/api/movies/${id}/reviews`,
-        newReview,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Uso di 'token'
-          },
-        }
-      );
-  
-      setUserReviews(response.data); // Aggiorna la lista delle recensioni
-      setReviewText(''); // Resetta il form
-      setRating(5);
-    } catch (error) {
-      console.error('Errore nell\'aggiungere la recensione:', error);
-      alert('Si è verificato un errore nell\'aggiungere la recensione.');
-    }
+  // Funzione per gestire l'aggiunta di una nuova recensione
+  const handleReviewAdded = (newReview) => {
+    setUserReviews([newReview, ...userReviews]);
   };
-  
 
   if (loading) {
     return <div className="movie-details-container">Caricamento...</div>;
@@ -100,22 +60,22 @@ const MovieDetails = () => {
     <div className="movie-details-container">
       <h1>{movie.title}</h1>
       <img
-        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+        src={movie.coverImageUrl}
         alt={movie.title}
         className="movie-details-poster"
       />
-      <p><strong>Data di uscita:</strong> {movie.release_date}</p>
+      <p><strong>Data di uscita:</strong> {movie.publishedDate ? new Date(movie.publishedDate).toLocaleDateString() : 'N/A'}</p>
       <p><strong>Valutazione media:</strong> {movie.vote_average}/10</p>
-      <p><strong>Genere:</strong> {movie.genres.map(genre => genre.name).join(', ')}</p>
-      <p><strong>Trama:</strong> {movie.overview}</p>
+      <p><strong>Genere:</strong> {movie.genres ? movie.genres.map(genre => genre.name).join(', ') : 'N/A'}</p>
+      <p><strong>Trama:</strong> {movie.description}</p>
 
       {/* Sezione recensioni degli utenti */}
       <h2>Recensioni degli Utenti</h2>
       {userReviews.length > 0 ? (
-        userReviews.map((review, index) => (
-          <div key={index} className="review">
-            <p><strong>{review.userId}</strong>: {review.text}</p>
-            <p>Valutazione: {review.rating}/5</p>
+        userReviews.map((review) => (
+          <div key={review._id} className="review">
+            <p><strong>{review.user.username}</strong>: {review.reviewText}</p>
+            <p>Valutazione: {review.rating}/10</p>
           </div>
         ))
       ) : (
@@ -123,35 +83,16 @@ const MovieDetails = () => {
       )}
 
       {/* Form per aggiungere una nuova recensione */}
-      {isLoggedIn ? (
-        <form onSubmit={handleSubmitReview}>
-          <h3>Lascia una recensione</h3>
-          <div className="form-group">
-            <label>Valutazione:</label>
-            <select
-              value={rating}
-              onChange={(e) => setRating(e.target.value)}
-              className="form-control"
-            >
-              {[5, 4, 3, 2, 1].map(value => (
-                <option key={value} value={value}>{value}</option>
-              ))}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Recensione:</label>
-            <textarea
-              value={reviewText}
-              onChange={(e) => setReviewText(e.target.value)}
-              required
-              className="form-control"
-            />
-          </div>
-          <button type="submit" className="btn btn-primary">Invia Recensione</button>
-        </form>
-      ) : (
-        <p>Devi essere loggato per lasciare una recensione.</p>
-      )}
+      <div className="add-review-section mt-5">
+        {isLoggedIn ? (
+          <AddReview movieId={id} onReviewAdded={handleReviewAdded} />
+        ) : (
+          <p>
+            <Link to="/register" className="auth-link">Registrati</Link> o{' '}
+            <Link to="/login" className="auth-link">Effettua il login</Link> per lasciare una recensione.
+          </p>
+        )}
+      </div>
     </div>
   );
 };

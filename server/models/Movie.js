@@ -1,13 +1,43 @@
+// server/models/Movie.js
 const mongoose = require('mongoose');
-const reviewSchema = require('./Review');
 
-const movieSchema = new mongoose.Schema({
-  tmdbId: {
+const ReviewSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  rating: {
     type: Number,
+    required: true,
+    min: 1,
+    max: 10,
+  },
+  reviewText: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+const MovieSchema = new mongoose.Schema({
+  tmdbId: {
+    type: String,
     required: true,
     unique: true,
   },
-  reviews: [reviewSchema],
+  title: {
+    type: String,
+    required: true,
+  },
+  description: String,
+  publishedDate: Date,
+  coverImageUrl: String,
+  reviews: [ReviewSchema],
 });
 
-module.exports = mongoose.model('Movie', movieSchema);
+// Prevenire OverwriteModelError
+module.exports = mongoose.models.Movie || mongoose.model('Movie', MovieSchema);
