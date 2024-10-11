@@ -24,7 +24,7 @@ const ReviewSchema = new mongoose.Schema({
 });
 
 const MovieSchema = new mongoose.Schema({
-  imdbId: {
+  tmdbId: { // Assicurati che questo campo sia coerente
     type: String,
     required: true,
     unique: true,
@@ -33,7 +33,7 @@ const MovieSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  author: String,
+
   description: String,
   publishedDate: Date,
   coverImageUrl: String,

@@ -1,15 +1,24 @@
-// server/routes/movies.js
 const express = require('express');
 const router = express.Router();
-const axios = require('axios'); // Importazione di axios
-const Movie = require('../models/movie'); // Modello del film
-const auth = require('../middleware/authMiddleware'); // Middleware di autenticazione
+const axios = require('axios'); 
+const Movie = require('../models/movie'); 
+const auth = require('../middleware/authMiddleware');
 
 // Rotta per ottenere i dettagli di un film dall'API TMDB e salvarlo nel database se non esiste
 router.get('/:id', async (req, res) => {
   const movieId = req.params.id; // ID del film da TMDB
 
   try {
+    // Recupera il titolo del film da TMDb
+    const tmdbResponse = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, {
+      params: {
+        api_key: process.env.TMDB_API_KEY,
+        language: 'it-IT',
+      },
+    });
+    const movieTitle = tmdbResponse.data.title;
+
+    // Aggiorna il modello Movie
     let movie = await Movie.findOne({ tmdbId: movieId });
 
     if (!movie) {
@@ -54,7 +63,7 @@ router.post('/:id/reviews', auth, async (req, res) => {
   }
 
   try {
-    // Trova il film per ID (tmdbId)
+    // Trova il film per ID (IMDB ID)
     const movie = await Movie.findOne({ tmdbId: req.params.id });
     if (!movie) {
       return res.status(404).json({ msg: 'Film non trovato.' });
@@ -76,7 +85,7 @@ router.post('/:id/reviews', auth, async (req, res) => {
     // Popola il campo `user` nella recensione per ottenere dettagli dell'utente
     const populatedReview = await Movie.findOne({ tmdbId: req.params.id })
       .select('reviews')
-      .populate('reviews.user', 'username'); // Assicurati che il modello User abbia un campo `username`
+      .populate('reviews.user', 'username');
 
     // Rispondi con la recensione appena aggiunta
     res.json(populatedReview.reviews[0]);
@@ -91,7 +100,7 @@ router.get('/:movieId/reviews', async (req, res) => {
   const { movieId } = req.params;
 
   try {
-    const movie = await Movie.findOne({ tmdbId: movieId }).populate('reviews.user', 'username');
+    const movie = await Movie.findOne({ tmdbId: movieId });
     if (!movie) {
       return res.status(200).json([]); 
     }
@@ -102,6 +111,41 @@ router.get('/:movieId/reviews', async (req, res) => {
     res.status(500).send('Errore nel recuperare le recensioni');
   }
 });
+
+router.get('/:id', async (req, res) => {
+  const movieId = req.params.id; // ID del film dall'IMDB
+
+  try {
+    let movie = await Movie.findOne({ imdbId: movieId });
+
+    if (!movie) {
+      // Se il film non esiste nel database, recuperalo dall'API IMDB e salvalo
+      const response = await axios.get(`http://www.omdbapi.com/?i=${movieId}&apikey=${process.env.OMDB_API_KEY}`);
+
+      if (response.data.Response === 'False') {
+        return res.status(404).json({ msg: 'Film non trovato nell\'API IMDB.' });
+      }
+
+      movie = new Movie({
+        imdbId: movieId, // Assicurati di includere l'imdbId
+        title: response.data.Title,
+        author: response.data.Director, // Ad esempio
+        description: response.data.Plot,
+        publishedDate: new Date(response.data.Released),
+        coverImageUrl: response.data.Poster,
+        reviews: []
+      });
+
+      await movie.save();
+    }
+
+    res.json(movie);
+  } catch (error) {
+    console.error('Errore nel recuperare il film:', error.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 
 
 module.exports = router;
