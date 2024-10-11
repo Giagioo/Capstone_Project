@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/authMiddleware');
 const Movie = require('../models/movie');
+const mongoose = require('mongoose');
 
 // Rotta per aggiornare una recensione
 router.put('/:reviewId', auth, async (req, res) => {
@@ -57,29 +58,38 @@ router.put('/:reviewId', auth, async (req, res) => {
 router.delete('/:reviewId', auth, async (req, res) => {
   const { reviewId } = req.params;
 
-  console.log(`Eliminazione recensione: ${reviewId}`);
+  // Verifica se reviewId è un ObjectId valido
+  if (!mongoose.Types.ObjectId.isValid(reviewId)) {
+    return res.status(400).json({ msg: 'ID recensione non valido.' });
+  }
 
   try {
+    // Trova il film che contiene la recensione
     const movie = await Movie.findOne({ 'reviews._id': reviewId });
 
     if (!movie) {
-      console.log('Recensione non trovata nel film.');
       return res.status(404).json({ msg: 'Recensione non trovata.' });
     }
 
+    // Trova la recensione
     const review = movie.reviews.id(reviewId);
 
+    if (!review) {
+      return res.status(404).json({ msg: 'Recensione non trovata.' });
+    }
+
+    // Verifica che la recensione appartenga all'utente
     if (review.user.toString() !== req.user.id) {
-      console.log('Utente non autorizzato a eliminare questa recensione.');
       return res.status(401).json({ msg: 'Non autorizzato a eliminare questa recensione.' });
     }
 
-    // Rimuovi la recensione
-    review.remove();
-    await movie.save();
+    // Rimuovi la recensione usando $pull
+    await Movie.updateOne(
+      { 'reviews._id': reviewId },
+      { $pull: { reviews: { _id: reviewId } } }
+    );
 
-    console.log('Recensione eliminata con successo.');
-    res.json({ msg: 'Recensione eliminata.' });
+    res.json({ msg: 'Recensione rimossa con successo.' });
   } catch (error) {
     console.error('Errore nell\'eliminare la recensione:', error.message);
     res.status(500).send('Server Error');

@@ -1,7 +1,8 @@
+// src/components/UserProfile.js
 import React, { useEffect, useState, useContext } from 'react';
-import axios from '../utlis/axiosInstance';
+import axios from '../utlis/axiosInstance'; // Assicurati che il percorso sia corretto
 import { AuthContext } from '../context/AuthContext';
-import './UserProfile.css';
+import './UserProfile.css'; // Crea questo file per gli stili
 
 const UserProfile = () => {
   const { authData } = useContext(AuthContext);
@@ -18,9 +19,7 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        console.log('Richiesta per /users/me');
         const response = await axios.get('/users/me');
-        console.log('Risposta da /users/me:', response.data);
         setUser(response.data.user);
         setReviews(response.data.reviews);
       } catch (err) {
@@ -38,7 +37,6 @@ const UserProfile = () => {
     if (!window.confirm('Sei sicuro di voler eliminare questa recensione?')) return;
 
     try {
-      console.log(`Eliminazione recensione: ${reviewId}`);
       await axios.delete(`/reviews/${reviewId}`);
       setReviews(reviews.filter(review => review._id !== reviewId));
     } catch (err) {
@@ -48,7 +46,6 @@ const UserProfile = () => {
   };
 
   const handleEditReview = (review) => {
-    console.log('Modifica recensione:', review);
     setEditingReviewId(review._id);
     setEditedRating(review.rating);
     setEditedReviewText(review.reviewText);
@@ -62,12 +59,11 @@ const UserProfile = () => {
 
   const handleSaveEdit = async (reviewId) => {
     try {
-      console.log(`Salvataggio recensione: ${reviewId}, rating: ${editedRating}, text: ${editedReviewText}`);
       const response = await axios.put(`/reviews/${reviewId}`, {
         rating: editedRating,
         reviewText: editedReviewText,
       });
-      console.log('Recensione aggiornata:', response.data);
+
       setReviews(reviews.map(review => 
         review._id === reviewId ? response.data : review
       ));
@@ -95,6 +91,7 @@ const UserProfile = () => {
         <div className="user-info">
           <p><strong>Username:</strong> {user.username}</p>
           <p><strong>Email:</strong> {user.email}</p>
+          {/* Aggiungi altri campi se necessario */}
         </div>
       )}
 
